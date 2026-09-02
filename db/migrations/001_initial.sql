@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
   status TEXT NOT NULL DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE','SUSPENDED')),
   upload_enabled INTEGER NOT NULL DEFAULT 1,
   quota_bytes INTEGER NOT NULL,
+  theme TEXT NOT NULL DEFAULT 'light' CHECK (theme IN ('light','dark')),
   created_at TEXT NOT NULL,
   last_login_at TEXT
 );
@@ -31,4 +32,3 @@ CREATE TABLE IF NOT EXISTS files (
 CREATE INDEX IF NOT EXISTS files_owner_idx ON files(owner_id);
 CREATE TABLE IF NOT EXISTS audit_logs (id TEXT PRIMARY KEY NOT NULL, actor_id TEXT REFERENCES users(id) ON DELETE SET NULL, target_user_id TEXT REFERENCES users(id) ON DELETE SET NULL, action TEXT NOT NULL, metadata_json TEXT NOT NULL DEFAULT '{}', ip_address TEXT, created_at TEXT NOT NULL);
 CREATE INDEX IF NOT EXISTS audit_created_idx ON audit_logs(created_at);
-

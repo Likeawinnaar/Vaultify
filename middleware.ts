@@ -2,7 +2,10 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
-  const response = NextResponse.next();
+  const dynamicFile = request.nextUrl.pathname.match(/^\/api\/files\/([a-f0-9]+)$/);
+  const rewriteUrl = new URL("/api/file", request.url);
+  if (dynamicFile) { rewriteUrl.searchParams.set("id", dynamicFile[1]); if (request.nextUrl.searchParams.get("preview") === "1") rewriteUrl.searchParams.set("preview", "1"); }
+  const response = dynamicFile ? NextResponse.rewrite(rewriteUrl) : NextResponse.next();
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("X-Frame-Options", "DENY");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
@@ -12,4 +15,3 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = { matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"] };
-
