@@ -1,3 +1,39 @@
 "use client";
 import { useState } from "react";
-export default function AuthForm({mode}:{mode:"login"|"register"}){const [error,setError]=useState("");const [busy,setBusy]=useState(false);async function submit(e:React.FormEvent<HTMLFormElement>){e.preventDefault();setBusy(true);setError("");const body=Object.fromEntries(new FormData(e.currentTarget).entries());const endpoint=mode==="login"?"/api/auth/login":"/api/auth/register";const res=await fetch(endpoint,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)});const json=await res.json();if(!res.ok){setError(json.error||"Unable to continue");setBusy(false);return}location.href="/files"}return <form onSubmit={submit} className="mt-6 space-y-4">{mode==="register"&&<><label className="block text-sm font-semibold">Username<input name="username" required pattern="[a-zA-Z0-9_-]{3,32}" className="mt-2 w-full rounded-lg border border-slate-200 p-3"/></label><label className="block text-sm font-semibold">Email<input name="email" type="email" required className="mt-2 w-full rounded-lg border border-slate-200 p-3"/></label></>}<label className="block text-sm font-semibold">{mode==="login"?"Username or email":"Password"}{mode==="login"?<input name="identifier" required className="mt-2 w-full rounded-lg border border-slate-200 p-3"/>:<input name="password" type="password" minLength={12} required className="mt-2 w-full rounded-lg border border-slate-200 p-3"/>}</label>{mode==="login"&&<label className="block text-sm font-semibold">Password<input name="password" type="password" required className="mt-2 w-full rounded-lg border border-slate-200 p-3"/></label>}{error&&<p className="rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</p>}<button disabled={busy} className="button green w-full">{busy?"Please wait…":mode==="login"?"Sign in":"Create account"}</button>{mode==="login"&&<p className="text-center text-sm text-slate-500">Don&apos;t have an account? <a className="font-semibold text-vault underline" href="/register">Register</a></p>}</form>}
+
+export default function AuthForm({mode}:{mode:"login"|"register"}){
+  const [error,setError]=useState("");
+  const [busy,setBusy]=useState(false);
+
+  async function submit(e:React.FormEvent<HTMLFormElement>){
+    e.preventDefault();
+    setBusy(true);
+    setError("");
+    const form=new FormData(e.currentTarget);
+    const body=Object.fromEntries(form.entries());
+    if(mode==="register"&&String(body.password)!==String(body.confirmPassword)){
+      setError("Passwords do not match");
+      setBusy(false);
+      return;
+    }
+    delete body.confirmPassword;
+    const endpoint=mode==="login"?"/api/auth/login":"/api/auth/register";
+    const res=await fetch(endpoint,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)});
+    const json=await res.json().catch(()=>({}));
+    if(!res.ok){setError(json.error||"Unable to continue");setBusy(false);return;}
+    location.href="/dashboard";
+  }
+
+  return <form onSubmit={submit} className="mt-6 space-y-4">
+    {mode==="register"&&<>
+      <label className="block text-sm font-semibold">Username<input name="username" required pattern="[a-zA-Z0-9_-]{3,32}" className="mt-2 w-full rounded-lg border border-slate-200 p-3"/></label>
+      <label className="block text-sm font-semibold">Email<input name="email" type="email" required className="mt-2 w-full rounded-lg border border-slate-200 p-3"/></label>
+    </>}
+    {mode==="login"?<label className="block text-sm font-semibold">Username or email<input name="identifier" required autoComplete="username" className="mt-2 w-full rounded-lg border border-slate-200 p-3"/></label>:<label className="block text-sm font-semibold">Password<input name="password" type="password" minLength={12} maxLength={128} required autoComplete="new-password" className="mt-2 w-full rounded-lg border border-slate-200 p-3"/></label>}
+    {mode==="register"&&<label className="block text-sm font-semibold">Confirm password<input name="confirmPassword" type="password" minLength={12} maxLength={128} required autoComplete="new-password" className="mt-2 w-full rounded-lg border border-slate-200 p-3"/></label>}
+    {mode==="login"&&<label className="block text-sm font-semibold">Password<input name="password" type="password" required autoComplete="current-password" className="mt-2 w-full rounded-lg border border-slate-200 p-3"/></label>}
+    {error&&<p className="rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</p>}
+    <button disabled={busy} className="button green w-full">{busy?"Please wait…":mode==="login"?"Sign in":"Create account"}</button>
+    {mode==="login"&&<p className="text-center text-sm text-slate-500">Don&apos;t have an account? <a className="font-semibold text-vault underline" href="/register">Register</a></p>}
+  </form>;
+}

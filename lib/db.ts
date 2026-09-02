@@ -41,7 +41,9 @@ export async function getClient(): Promise<Client> {
   return clientPromise;
 }
 
-function normalizeRow<T>(columns: string[], row: readonly InValue[]): T {
+type IndexedRow = { readonly [index: number]: InValue };
+
+function normalizeRow<T>(columns: string[], row: IndexedRow): T {
   const value: Record<string, InValue> = {};
   columns.forEach((column, index) => {
     value[column] = row[index] ?? null;

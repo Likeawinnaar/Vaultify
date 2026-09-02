@@ -1,0 +1,25 @@
+name: Vaultify Debug Verification
+
+on:
+  push:
+    branches: [fix/vercel-persistence-auth-debug2]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run build
+      - name: Upload generated npm lockfile
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-package-lock
+          path: package-lock.json
+          if-no-files-found: ignore
