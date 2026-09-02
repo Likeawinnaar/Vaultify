@@ -40,6 +40,3 @@ npm run start
 Run behind HTTPS, set `NODE_ENV=production`, use a persistent `VAULTIFY_DATA_DIR`, and keep `.env` outside version control. For multi-instance deployments, place the database and encrypted storage on a shared, locking-capable volume or use a single application instance.
 
 See [SECURITY.md](SECURITY.md), [CONTRIBUTING.md](CONTRIBUTING.md), and [docs/deployment.md](docs/deployment.md) before exposing an instance to the internet.
-
-Support LW Development · Goal 10K.
-

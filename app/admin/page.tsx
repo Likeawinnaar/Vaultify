@@ -1,6 +1,7 @@
 import AdminConsole from "@/components/admin-console-fixed";
 import { requireAdmin } from "@/lib/auth";
 import db,{getSetting} from "@/lib/db";
+export const dynamic = "force-dynamic";
 
 export default async function AdminPage(){
   const admin=await requireAdmin();

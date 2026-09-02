@@ -1,6 +1,7 @@
 import FileDashboard from "@/components/file-dashboard";
 import { requireUser } from "@/lib/auth";
 import db,{getSetting} from "@/lib/db";
+export const dynamic = "force-dynamic";
 
 export default async function FilesPage(){
   const user=await requireUser();
