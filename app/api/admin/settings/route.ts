@@ -20,12 +20,14 @@ export async function PATCH(request: Request) {
       ["default_quota_bytes", String(data.defaultQuotaBytes)],
       ["max_upload_bytes", String(data.maxUploadBytes)],
       ["public_registration", String(data.publicRegistration)],
+      ["allowed_extensions", JSON.stringify([...new Set(data.allowedExtensions)])],
+      ["blocked_extensions", JSON.stringify([...new Set(data.blockedExtensions)])],
     ];
     await writeBatch(values.map(([key, value]) => ({
       sql: "INSERT INTO settings(key,value,updated_at) VALUES(?,?,CURRENT_TIMESTAMP) ON CONFLICT(key) DO UPDATE SET value=excluded.value,updated_at=CURRENT_TIMESTAMP",
       args: [key, value],
     })));
-    await audit("APPLICATION_SETTINGS_CHANGED", user.id, null, { websiteName: data.websiteName }, clientIp(request));
+    await audit("APPLICATION_SETTINGS_CHANGED", user.id, null, { websiteName: data.websiteName, registration: data.publicRegistration, allowedExtensions: data.allowedExtensions, blockedExtensions: data.blockedExtensions }, clientIp(request));
     return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ error: "Invalid settings" }, { status: 400 });
