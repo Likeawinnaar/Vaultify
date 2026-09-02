@@ -15,13 +15,11 @@ Secure, open-source, self-hosted file storage for everyday use. Vaultify stores 
 
 ## Quick start
 
-Requirements: Node.js 20+, npm, and a writable data directory.
+Requirements: Node.js 20+, npm or pnpm, and a writable data directory.
 
 ```bash
 npm install
-cp .env.example .env
-# Generate a 32-byte key: openssl rand -base64 32
-# Put it in VAULTIFY_MASTER_KEY in .env
+npm run setup:env
 npm run db:migrate
 npm run dev
 ```
@@ -39,4 +37,4 @@ npm run start
 
 Run behind HTTPS, set `NODE_ENV=production`, use a persistent `VAULTIFY_DATA_DIR`, and keep `.env` outside version control. For multi-instance deployments, place the database and encrypted storage on a shared, locking-capable volume or use a single application instance.
 
-See [SECURITY.md](SECURITY.md), [CONTRIBUTING.md](CONTRIBUTING.md), and [docs/deployment.md](docs/deployment.md) before exposing an instance to the internet.
+For Vercel, add the generated `VAULTIFY_MASTER_KEY` and other server-only values in Project Settings → Environment Variables. Vercel Functions cannot persist local SQLite/filesystem data, so use a persistent database and object storage adapter for production Vercel hosting. See [SECURITY.md](SECURITY.md), [CONTRIBUTING.md](CONTRIBUTING.md), and [docs/deployment.md](docs/deployment.md) before exposing an instance to the internet.
