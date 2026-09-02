@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { get, run } from "./db";
+import { databaseConfigured, get, run } from "./db";
 import { hashToken, randomId } from "./security";
 import { audit } from "./audit";
 
@@ -41,11 +41,12 @@ export async function createSession(user: User, ip?: string): Promise<void> {
 export async function destroySession(): Promise<void> {
   const jar = await cookies();
   const raw = jar.get("vaultify_session")?.value;
-  if (raw) await run("DELETE FROM sessions WHERE token_hash = ?", [hashToken(raw)]);
+  if (raw && databaseConfigured()) await run("DELETE FROM sessions WHERE token_hash = ?", [hashToken(raw)]);
   jar.delete("vaultify_session");
 }
 
 export async function getCurrentUser(): Promise<User | null> {
+  if (!databaseConfigured()) return null;
   const raw = (await cookies()).get("vaultify_session")?.value;
   if (!raw) return null;
   const row = await get<User>(
