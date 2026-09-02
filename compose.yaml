@@ -1,0 +1,15 @@
+services:
+  vaultify:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file: .env
+    environment:
+      VAULTIFY_DATA_DIR: /data
+      NODE_ENV: production
+    volumes:
+      - vaultify-data:/data
+volumes:
+  vaultify-data:
+
