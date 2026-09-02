@@ -7,15 +7,24 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    env:
+      VAULTIFY_DATA_DIR: /tmp/vaultify-e2e
+      VAULTIFY_SESSION_DAYS: 1
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Create temporary test encryption key
+        run: echo "VAULTIFY_MASTER_KEY=$(openssl rand -base64 32 | tr -d '\n')" >> "$GITHUB_ENV"
+      - run: rm -rf "$VAULTIFY_DATA_DIR"
       - run: npm install
+      - run: npm audit --omit=dev --audit-level=high
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
       - name: Upload generated npm lockfile
         if: always()
         uses: actions/upload-artifact@v4
