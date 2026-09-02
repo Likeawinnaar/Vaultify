@@ -1,0 +1,2 @@
+.support{margin:0 0 14px;padding:13px 12px;border-radius:10px;background:#f2edff;color:#584aa7;display:flex;justify-content:space-between;align-items:center;font-size:11px}.support small{display:block;color:#8377c4;font-size:10px;margin-top:3px}.support>span{font-size:16px}.toast{position:fixed;right:24px;bottom:24px;background:#172129;color:#fff;padding:12px 16px;border-radius:8px;box-shadow:0 12px 30px #17332918;font-size:12px;opacity:0;transform:translateY(10px);pointer-events:none;transition:.2s}.toast.show{opacity:1;transform:translateY(0)}
+
